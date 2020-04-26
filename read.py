@@ -1,3 +1,5 @@
+from BayesNet import *
+
 def read_bn(path):
     """
     Wrapper function for reading BayesNet objects
@@ -26,12 +28,38 @@ def read_bn(path):
     else:
         print("Path Extension not recognized")
 
+def topsort(edge_dict, root=None):
+    """
+    List of nodes in topological sort order from edge dict
+    where key = rv and value = list of rv's children
+    """
+    queue = []
+    if root is not None:
+        queue = [root]
+    else:
+        for rv in edge_dict.keys():
+            prior = True
+            for p in edge_dict.keys():
+                if rv in edge_dict[p]:
+                    prior = False
+            if prior == True:
+                queue.append(rv)
+
+    visited = []
+    while queue:
+        vertex = queue.pop(0)
+        if vertex not in visited:
+            visited.append(vertex)
+            for nbr in edge_dict[vertex]:
+                queue.append(nbr)
+        # queue.extend(edge_dict[vertex]) # add all vertex's children
+    return visited
 
 def read_bif(path):
     """
     This function reads a .bif file into a
     BayesNet object. It's probably not the
-    fastest or prettiest but it gets the job
+    fastest or  prettiest but it gets the job
     done.
     Arguments
     ---------
@@ -93,9 +121,13 @@ def read_bif(path):
         }
         _F[rv] = f
 
-
-
-
+    bn = BayesNet()
+    bn.F = _F
+    bn.E = _E
+    bn.V = list(topsort(_E))
+    return bn
 
 
 read_bif("data/asia.bif")
+
+
