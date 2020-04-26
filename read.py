@@ -93,13 +93,9 @@ def read_bif(path):
         }
         _F[rv] = f
 
-    print(_F)
-    print(_E)
-    bn = BayesNet()
-    bn.F = _F
-    bn.E = _E
-    bn.V = list(topsort(_E))
 
-    return bn
+
+
+
 
 read_bif("data/asia.bif")
