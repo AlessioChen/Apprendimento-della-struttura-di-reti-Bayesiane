@@ -1,9 +1,12 @@
 from Node import Node
+import numpy as np
 
 def read_bif(path):
     nodes = []
     with open(path, 'r') as f:
         i = 0
+        c = 0
+
         while True:
             line = f.readline()
             if 'variable' in line:
@@ -23,27 +26,32 @@ def read_bif(path):
                 if len(parents) == 0:  # prior
                     new_line = f.readline().replace(';', ' ').replace(',', ' ').split()
                     prob_values = new_line[1:]
-                    node.cpt = prob_values
+
+                    nodes[c].cpt = prob_values
                 else:  # not a prior
                     while True:
                         new_line = f.readline()
+
                         if '}' in new_line:
                             break
                         new_line = new_line.replace(',', ' ').replace(';', ' ').replace('(', ' ').replace(')',
                                                                                                           ' ').split()
 
-                        prob_values = new_line[-(len(parents)):]
-                        node.cpt = prob_values
+                        prob_values = new_line[(len(parents)):]
+                        a = np.asfarray(prob_values,float)
+                        nodes[c].cpt.append(a)
 
                     for j in range(len(parents)):
                         for k in range(len(nodes)):
                             if nodes[k].name == parents[j]:
-                                nodes[j].parents.append(nodes[k].value)
+                                nodes[c].parents.append(k)
 
+                c = c + 1
             if line == '':
                 break
-
             print()
 
     return nodes
 
+
+read_bif('data/asia.bif')
