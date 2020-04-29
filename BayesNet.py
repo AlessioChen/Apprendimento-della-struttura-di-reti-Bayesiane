@@ -14,6 +14,7 @@ class BayesNet:
         for i in range (len(nodes)):
             nodes[i].cpt = np.asfarray(nodes[i].cpt,float)
             nodes[i].print_node()
+        self.adjMatrixGen()
 
 
 
@@ -23,10 +24,17 @@ class BayesNet:
         self.adjMatrix = np.zeros((self.n, self.n))
 
         for i in range(self.n):
-            for j in range(len(self.nodes[i].pi)):
-                pass
+            for j in range(len(self.nodes[i].parents)):
+                for k in range (self.n):
+                    if self.nodes[i].parents[j] == self.nodes[k].value:
+                        self.adjMatrix[k][i] = 1
+
+
+    def print_graph(self):
+        print(self.adjMatrix)
 
 
 nodes = Read.read_bif('data/asia.bif')
 net = BayesNet(nodes)
+net.print_graph()
 

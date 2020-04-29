@@ -49,9 +49,7 @@ def read_bif(path):
                 c = c + 1
             if line == '':
                 break
-            print()
+
 
     return nodes
 
-
-read_bif('data/asia.bif')
