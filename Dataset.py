@@ -8,7 +8,7 @@ class Dataset:
     def __init__(self, bn_net, dim):
         self.net = bn_net
         self.dim = dim
-        self.dataset = np.zeros((self.dim, self.dim))
+        self.dataset = np.zeros((self.dim, self.net.n))
         # con il DFS mi genera un cammino dalla radice alle foglie
         self.ordedered_array = order(self.net.adjMatrix, self.net.nodes)
 
@@ -19,12 +19,17 @@ class Dataset:
                 if r1 <= r2:
                     self.dataset[i][self.ordedered_array[j].value] = 1
 
+        mat = np.asmatrix(self.dataset)
+        np.savetxt('out.txt', mat, fmt='%s')
+
+
+
 
 
     def get_prob(self, i, k):
         # k è i'indice del nodo che sto esaminando ordinato in base al DFS
         # i è l'indice del nodo padre
-        prob =0
+        prob = 0
 
         if len(self.net.nodes[k].parents) == 0:  # prior p(a)
             prob = self.net.nodes[k].cpt[1]
