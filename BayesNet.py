@@ -1,8 +1,9 @@
 # classe che rappresenta la rete bayesiana
 
 import numpy as np
-import Functions as functions
-import Node
+from Functions import *
+from Node import *
+from Dataset import *
 
 class BayesNet:
 
@@ -34,6 +35,8 @@ class BayesNet:
         print(self.adjMatrix)
 
 
-nodes = functions.read_bif('data/asia.bif')
+nodes = read_bif('data/asia.bif')
 net = BayesNet(nodes)
+dataset = Dataset(net, 1000)
+
 

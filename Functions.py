@@ -1,5 +1,6 @@
 from Node import Node
 import numpy as np
+import copy
 
 
 # lettura da file della rete
@@ -61,7 +62,7 @@ def dfs_visit(nodes, adjacency_matrix, u):
     u.color = 'Grey'
     for i in range(len(adjacency_matrix)):
         if adjacency_matrix[u.value, i] == 1 and nodes[i].color == 'White':
-            nodes[i].parents = u
+            nodes[i].parents = u.value
             dfs_visit(nodes, adjacency_matrix, nodes[i])
     u.color = 'Black'
     time += 1
@@ -72,7 +73,7 @@ def dfs_visit(nodes, adjacency_matrix, u):
 def dfs(nodes, adjacency_matrix):
     for i in nodes:
         i.color = 'White'
-        i.pi = None
+        i.parents = None
     global time
     time = 0
     for i in nodes:
