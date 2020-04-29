@@ -1,7 +1,7 @@
 # classe che rappresenta la rete bayesiana
 
 import numpy as np
-import Read
+import Functions as functions
 import Node
 
 class BayesNet:
@@ -13,7 +13,7 @@ class BayesNet:
 
         for i in range (len(nodes)):
             nodes[i].cpt = np.asfarray(nodes[i].cpt,float)
-            nodes[i].print_node()
+
         self.adjMatrixGen()
 
 
@@ -34,7 +34,6 @@ class BayesNet:
         print(self.adjMatrix)
 
 
-nodes = Read.read_bif('data/asia.bif')
+nodes = functions.read_bif('data/asia.bif')
 net = BayesNet(nodes)
-net.print_graph()
 
