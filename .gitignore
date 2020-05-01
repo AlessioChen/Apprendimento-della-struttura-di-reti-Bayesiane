@@ -1,4 +1,10 @@
 *.idea
 /shelf/
 *.xml
-/venv
+/venv/
+
+
+
+
+
+
