@@ -1,6 +1,8 @@
-from Node import Node
-import numpy as np
 import copy
+
+import numpy as np
+
+from Node import Node
 
 
 # lettura da file della rete
@@ -55,7 +57,6 @@ def read_bif(path):
 
     return nodes
 
-
 def dfs_visit(nodes, adjacency_matrix, u):
     global time
     time += 1
@@ -69,7 +70,6 @@ def dfs_visit(nodes, adjacency_matrix, u):
     u.f = time
     return u.f
 
-
 def dfs(nodes, adjacency_matrix):
     for i in nodes:
         i.color = 'White'
@@ -79,7 +79,6 @@ def dfs(nodes, adjacency_matrix):
     for i in nodes:
         if i.color == 'White':
             dfs_visit(nodes, adjacency_matrix, i)
-
 
 def order(adjacency_matrix, nodes):
     # deep copy, serve per il dataset
