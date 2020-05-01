@@ -17,4 +17,3 @@ class Node:
         print(self.cpt)
         print(self.domain_values)
         print(self.value)
-        print()
