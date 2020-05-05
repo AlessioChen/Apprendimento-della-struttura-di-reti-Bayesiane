@@ -10,8 +10,7 @@ class Dataset:
         self.dim = dim
         self.dataset = np.zeros((self.dim, self.net.n))
         # con il DFS mi genera un cammino dalla radice alle foglie
-        self.ordedered_array = order(self.net.adjMatrix, self.net.nodes)
-        self.probs = []
+        self.ordedered_array = order(self.net.dag, self.net.nodes)
 
         for i in range(self.dim):  # righe del dataset
             for j in range(self.net.n):  # colonne del dataset
@@ -26,7 +25,6 @@ class Dataset:
             names = names + ' ' + self.net.nodes[i].name
 
         np.savetxt('out.txt', mat, header=names, fmt='%s')
-
 
     def get_prob(self, i, k):
         # k è i'indice del nodo che sto esaminando ordinato in base al DFS
