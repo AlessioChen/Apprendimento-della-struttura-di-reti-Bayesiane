@@ -8,7 +8,7 @@ class BayesNet:
     def __init__(self, nodes):
         self.nodes = nodes
         self.n = len(self.nodes)
-        self.dag = []
+        self.dag = np.zeros((1, 1))
 
         for i in range(len(nodes)):
             nodes[i].cpt = np.asfarray(nodes[i].cpt, float)
@@ -30,7 +30,6 @@ class BayesNet:
 
 
 nodes = read_bif('data/asia.bif')
-net = BayesNet(nodes)
-dataset = Dataset(net, 10000)
 
-k2()
+net = BayesNet(nodes)
+dataset = Dataset(net, 100000)

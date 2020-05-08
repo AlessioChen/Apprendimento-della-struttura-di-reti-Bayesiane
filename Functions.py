@@ -6,6 +6,22 @@ from Node import Node
 
 
 # lettura da file della rete
+def asia_net():
+    nodes = [0, 0, 0, 0, 0, 0, 0, 0]
+
+    nodes[0] = Node('asia', [], [0.01], [0, 1], 0)
+    nodes[1] = Node('tub', [0], [0.05, 0.01], [0, 1], 1)
+    nodes[2] = Node('smoke', [], [0.5], [0, 1], 2)
+    nodes[3] = Node('lung', [2], [0.1, 0.01], [0, 1], 3)
+    nodes[4] = Node('bronc', [2], [0.6, 0.3], [0, 1], 4)
+    nodes[5] = Node('either', [1, 3], [1.0, 1.0, 1.0, 0.0], [0, 1], 5)
+    nodes[6] = Node('xray', [5], [0.98, 0.05], [0, 1], 6)
+    nodes[7] = Node('dysp', [4, 5], [0.9, 0.7, 0.8, 0.1], [0, 1], 7)
+
+    return nodes
+
+
+# funzione che legge il grado da file
 def read_bif(path):
     nodes = []
     with open(path, 'r') as f:
@@ -131,6 +147,8 @@ def score(dataset, var, var_parents):
         used[d - 1] = 1
         parent = dataset[d - 1, var_parents]
         d += 1
+        if d > n:
+            break
         # count frequencies of state while keeping rack of used samples
         for j in range(d - 1, n):
             if used[j] == 0:
@@ -155,22 +173,17 @@ def score(dataset, var, var_parents):
 
 
 # upper_boud è in numero max di padri che può x un nodo
-def k2():
-    dataset = np.array(
-        [[1, 0, 0], [1, 1, 1], [0, 0, 1], [1, 1, 1], [0, 0, 0], [0, 1, 1], [1, 1, 1], [0, 0, 0], [1, 1, 1], [0, 0, 0]])
-    order = [0, 1, 2]
-    dim = 3  # numero di variabili
-    u = 2  # numero max di padri per un nodo
-    dag = np.zeros((dim, dim))
-
-    k2_score = np.zeros((1, dim))
+def k2(dataset, order, u=2):
+    # u è il max numero di padri che può avere un nodo
+    dim = len(order)
+    dag = np.zeros((dim, dim), dtype='int64')
+    k2_score = np.zeros((1, dim), dtype='float')
 
     for i in range(1, dim):
-
-        parent = np.zeros((dim, 1))
+        parent = np.zeros((dim, 1), dtype='int64')
         ok = 1
         p_old = -1e10
-        while ok == 1 and np.sum(parent) < u:
+        while ok == 1 and np.sum(parent) <= u:
             local_max = -10e10
             local_node = 0
             # iterate through possible parent connections to determine best action
@@ -194,8 +207,8 @@ def k2():
                 parent[local_node] = 1
             else:
                 ok = 0
-            k2_score[0, order[i]] = p_old
-            dag[:, order[i]] = parent.reshape(dim)
+        k2_score[0, order[i]] = p_old
+        dag[:, order[i]] = parent.reshape(dim)
 
-    print(dag, k2_score)
+    # print(dag, k2_score)
     return dag, k2_score

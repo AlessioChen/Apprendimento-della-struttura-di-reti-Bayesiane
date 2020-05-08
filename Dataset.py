@@ -10,21 +10,21 @@ class Dataset:
         self.dim = dim
         self.dataset = np.zeros((self.dim, self.net.n))
         # con il DFS mi genera un cammino dalla radice alle foglie
-        self.ordedered_array = order(self.net.dag, self.net.nodes)
+        self.ordered_array = order(self.net.dag, self.net.nodes)
 
         for i in range(self.dim):  # righe del dataset
             for j in range(self.net.n):  # colonne del dataset
                 r1 = float(random.random())
-                r2 = float(self.get_prob(i, self.ordedered_array[j].value))
+                r2 = float(self.get_prob(i, self.ordered_array[j].value))
                 if r1 <= r2:
-                    self.dataset[i][self.ordedered_array[j].value] = 1
+                    self.dataset[i][self.ordered_array[j].value] = 1
 
-        mat = np.asmatrix(self.dataset)
-        names = ''
-        for i in range(len(self.net.nodes)):
-            names = names + ' ' + self.net.nodes[i].name
-
-        np.savetxt('out.txt', mat, header=names, fmt='%s')
+    #     mat = np.asmatrix(self.dataset)
+    #     names = ''
+    #     for i in range(len(self.net.nodes)):
+    #         names = names + ' ' + self.net.nodes[i].name
+    #
+    # # np.savetxt('out.txt', mat, header=names, fmt='%s')
 
     def get_prob(self, i, k):
         # k è i'indice del nodo che sto esaminando ordinato in base al DFS
@@ -56,3 +56,11 @@ class Dataset:
                     prob = self.net.nodes[k].cpt[1][0]
 
         return prob
+
+    def get_order(self):
+
+        order = np.zeros(len(self.ordered_array), dtype='int64')
+        for i in range(len(self.ordered_array)):
+            order[i] = int(self.ordered_array[i].value)
+
+        return order
