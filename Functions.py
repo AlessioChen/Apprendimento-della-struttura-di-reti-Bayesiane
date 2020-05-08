@@ -1,4 +1,6 @@
 import copy
+import itertools
+import math
 
 import numpy as np
 
@@ -110,105 +112,79 @@ def order(adjacency_matrix, nodes):
     return nodes_ordered
 
 
-# Ln gamma function ln((x-1)!) ->  ln(0) + ln(1) + ... + ln(x-1)
-def ln_gamma(x):
-    return sum(np.log(range(1, int(x))))
+def cartesian_product(n, f_i):
+    # n è il numero di padri
+    count = 0
+    x = [0, 1]
+    if n == 1:
+        for iter in itertools.product(x):
+            f_i[count] = iter
+            count += 1
+    if n == 2:
+        for iter in itertools.product(x, x):
+            f_i[count] = iter
+            count += 1
+
+    return f_i
 
 
-def find(arr, target):
-    array = np.array([], dtype='int64')
-    for i in range(np.size(arr)):
-        if arr[i] == target:
-            array = np.append(array, i)
-    return array
+def count_case(dataset, f_i, p_i, i, j, k):
+    # i indice della variabile
+    # j configurazione dei padri
+    # k valore che può assumere la variabile i
+    # f_i insieme delle configurazione dei padri di i
+
+    a_ijk = 0
+    a = f_i[j]
+    if len(p_i) == 0:  # 0 padri
+        for m in range(len(dataset)):
+            if dataset[m][i] == k:
+                a_ijk = a_ijk + 1
+    else:
+        for m in range(len(dataset)):
+            if dataset[m][i] == k:
+                for index in range(len(p_i)):
+                    if dataset[m][p_i[index]] == a[index]:
+                        a_ijk = a_ijk + 1
+    return a_ijk
 
 
-def score(dataset, var, var_parents):
-    score = 0
-    n = np.size(dataset[0])
-    dim_var = 2
-    range_var = [0, 1]
-    r_i = dim_var
-    data_o = dataset
-    used = np.zeros(n, dtype='int64')
+def score(dataset, i, p_i):
+    # r_i = #dei valori che può assumere la variabile x_i
+    r_i = 2
+    score = 1
+    n_ij = 0
+    fact = 1
+    p1 = 1
+    p2 = 1
+    # TODO considerare il caso q_i= 0
+    q_i = 2 ** len(p_i)
 
-    d = 1
-    # Get first unproccesed sample
-    while d <= n:
-        freq = np.zeros(int(dim_var), dtype='int64')
-        while d <= n and used[d - 1] == 1:
-            d += 1
-        if d > n:
-            break
-        for i in range(int(dim_var)):
-            if range_var[i] == data_o[d - 1, var]:
-                break
-        freq[i] = 1
-        used[d - 1] = 1
-        parent = dataset[d - 1, var_parents]
-        d += 1
-        if d > n:
-            break
-        # count frequencies of state while keeping rack of used samples
-        for j in range(d - 1, n):
-            if used[j] == 0:
-                if (parent == data_o[j, var_parents]).all():
-                    i = 0
-                    while range_var[i] != data_o[j, var]:
-                        i += 1
-                    freq[i] += 1
-                    used[j] = 1
-        sum_m = np.sum(freq)
-        r_i = int(r_i)
+    # genera il prodotto cartesiano
+    f_i = np.zeros((q_i, (len(p_i) + 1)))
+    f_i = cartesian_product(len(p_i), f_i)
 
-        # finally sum over frequencies to get log likelihood bayesian score
-        # with uniform priors
+    for j in range(len(p_i) + 1):
+        for k in range(r_i):
+            a_ijk = count_case(dataset, f_i, p_i, i, j, k)
+            n_ij = n_ij + a_ijk
+            p2 = p2 * math.factorial(a_ijk)
+        n1 = math.factorial(r_i - 1)
+        d1 = math.factorial(n_ij + r_i - 1)
+        quoziente = n1 / d1
+        p1 = p1 * quoziente
+    score = p1 * p2
 
-        for j in range(1, r_i + 1):
-            if freq[j - 1] != 0:
-                score += ln_gamma(freq[j - 1] + 1)
-        score += ln_gamma(r_i) - ln_gamma(sum_m + r_i)
-
+    print(score)
+    print()
     return score
 
 
-# upper_boud è in numero max di padri che può x un nodo
-def k2(dataset, order, u=2):
-    # u è il max numero di padri che può avere un nodo
-    dim = len(order)
-    dag = np.zeros((dim, dim), dtype='int64')
-    k2_score = np.zeros((1, dim), dtype='float')
-
-    for i in range(1, dim):
-        parent = np.zeros((dim, 1), dtype='int64')
-        ok = 1
-        p_old = -1e10
-        while ok == 1 and np.sum(parent) <= u:
-            local_max = -10e10
-            local_node = 0
-            # iterate through possible parent connections to determine best action
-            for j in range(i - 1, -1, -1):
-                if parent[order[j]] == 0:
-                    parent[order[j]] = 1
-
-                    # score this node
-                    local_score = score(dataset, order[i], find(parent[:, 0], 1))
-
-                    # determine local max
-                    if local_score > local_max:
-                        local_max = local_score
-                        local_node = order[j]
-                    # mark parent processed
-                    parent[order[j]] = 0
-            # assign the highest parent
-            p_new = local_max
-            if p_new > p_old:
-                p_old = p_new
-                parent[local_node] = 1
-            else:
-                ok = 0
-        k2_score[0, order[i]] = p_old
-        dag[:, order[i]] = parent.reshape(dim)
-
-    # print(dag, k2_score)
-    return dag, k2_score
+def k2(dataset, node_order, upper_bound, n):
+    for i in range(n):
+        p_i = []
+        pred = []
+        p_old = score(dataset, node_order[i], p_i)
+        ok = True
+        while ok == True and len(p_i) < upper_bound:
+            pass

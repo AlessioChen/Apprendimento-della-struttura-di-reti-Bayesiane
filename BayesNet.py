@@ -1,5 +1,7 @@
 # classe che rappresenta la rete bayesiana
 
+import numpy as np
+
 from Dataset import *
 
 
@@ -29,7 +31,11 @@ class BayesNet:
         print(self.dag)
 
 
-nodes = read_bif('data/asia.bif')
+# nodes = read_bif('data/asia.bif')
+#
+# net = BayesNet(nodes)
+# # dataset = Dataset(net, 100000)
 
-net = BayesNet(nodes)
-dataset = Dataset(net, 100000)
+
+dataset = [[1, 0, 0], [1, 1, 1], [0, 0, 1], [1, 1, 1], [0, 0, 0], [0, 1, 1], [1, 1, 1], [0, 0, 0], [1, 1, 1], [0, 0, 0]]
+k2(dataset, [0, 1, 2], 1, 3)
