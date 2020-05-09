@@ -149,24 +149,23 @@ def count_case(dataset, f_i, p_i, i, j, k):
     return a_ijk
 
 
-def score(dataset, i, p_i):
+def score(dataset, node_i, p_i):
     # r_i = #dei valori che può assumere la variabile x_i
-    r_i = 2
-    score = 1
+    r_i = len(node_i.domain_values)
+    i = node_i.value
     n_ij = 0
-    fact = 1
     p1 = 1
     p2 = 1
     # TODO considerare il caso q_i= 0
     q_i = 2 ** len(p_i)
 
     # genera il prodotto cartesiano
-    f_i = np.zeros((q_i, (len(p_i) + 1)))
+    f_i = np.zeros((q_i, (len(p_i))))
     f_i = cartesian_product(len(p_i), f_i)
 
     for j in range(len(p_i) + 1):
         for k in range(r_i):
-            a_ijk = count_case(dataset, f_i, p_i, i, j, k)
+            a_ijk = count_case(dataset, f_i, p_i, i, j, node_i.domain_values[k])
             n_ij = n_ij + a_ijk
             p2 = p2 * math.factorial(a_ijk)
         n1 = math.factorial(r_i - 1)
@@ -180,11 +179,29 @@ def score(dataset, i, p_i):
     return score
 
 
-def k2(dataset, node_order, upper_bound, n):
+def k2(dataset, node_order, upper_bound):
+    n = len(node_order)
+    pred = []
     for i in range(n):
-        p_i = []
-        pred = []
-        p_old = score(dataset, node_order[i], p_i)
+        p_new = -10e10
+        p_old = score(dataset, node_order[i], node_order[i].parents)
         ok = True
-        while ok == True and len(p_i) < upper_bound:
-            pass
+        while ok == True and len(node_order[i].parents) < upper_bound:
+            for x in range(n):
+                if x in pred and x not in node_order[i].parents:
+                    temp = node_order[i].parents
+                    temp.append((int(x)))
+                    local_score = score(dataset, node_order[i], temp)
+                    if local_score > p_new:
+                        z = x
+                        p_new = local_score
+            # p_new forse da ricalcolare?
+            if p_new > p_old:
+                p_old = p_new
+                node_order[i].parents = np.append(node_order[i].parents, int(z))
+            else:
+                ok = False
+            pred = np.append(pred, int(i))
+
+    for j in range(len(node_order)):
+        print(node_order[j].parents)

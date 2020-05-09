@@ -13,6 +13,7 @@ class Node:
 
         self.color = 'white'
         self.f = 0
+        self.pred = []
 
     def print_node(self):
         print(self.name)
