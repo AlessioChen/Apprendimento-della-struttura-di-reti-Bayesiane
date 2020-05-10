@@ -14,8 +14,8 @@ class Dataset:
 
         for i in range(self.dim):  # righe del dataset
             for j in range(self.net.n):  # colonne del dataset
-                r1 = float(random.random())
-                r2 = float(self.get_prob(i, self.ordered_array[j].value))
+                r1 = random.random()
+                r2 = self.get_prob(self.ordered_array[j].value, i)
                 if r1 <= r2:
                     self.dataset[i][self.ordered_array[j].value] = 1
 
@@ -26,41 +26,42 @@ class Dataset:
     #
     # # np.savetxt('out.txt', mat, header=names, fmt='%s')
 
-    def get_prob(self, i, k):
-        # k è i'indice del nodo che sto esaminando ordinato in base al DFS
-        # i è l'indice del nodo padre
+    def get_prob(self, i, index):
+        # i è l'indice del nodo
+        # riga che sto esaminando
+        p_i = self.net.nodes[i].parents
         prob = 0
 
-        if len(self.net.nodes[k].parents) == 0:  # prior p(a)
-            prob = self.net.nodes[k].cpt[0]
-        else:
-            prob = self.net.nodes[k].cpt[1]
+        if len(p_i) == 0:  # no parents
+            prob = self.net.nodes[i].cpt[0]
 
-        if len(self.net.nodes[k].parents) == 1:  # nodo con un padre
-            if self.dataset[i][self.net.nodes[k].parents[0]] == 1:
-                prob = self.net.nodes[k].cpt[0][0]
-            else:
-                prob = self.net.nodes[k].cpt[1][0]
-
-        if len(self.net.nodes[k].parents) == 2:  # nodo con due padri
-            if self.dataset[i][self.net.nodes[k].parents[0]] == 1:
-                if self.dataset[i][self.net.nodes[k].parents[1]] == 1:
-                    prob = self.net.nodes[k].cpt[0][0]
+        if len(p_i) == 1:  # 1 parents
+            for j in p_i:
+                if self.dataset[index][j] == 1:
+                    prob = self.net.nodes[i].cpt[0]
                 else:
-                    prob = self.net.nodes[k].cpt[2][0]
+                    prob = self.net.nodes[i].cpt[1]
 
-            else:
-                if self.dataset[i][self.net.nodes[k].parents[1]] == 0:
-                    prob = self.net.nodes[k].cpt[3][0]
-                else:
-                    prob = self.net.nodes[k].cpt[1][0]
+        if len(p_i) == 2:  # 2 parents
+            s = list(p_i)
+            a = self.dataset[index][s[0]]
+            b = self.dataset[index][s[1]]
+            if a == 1 and b == 1:
+                prob = self.net.nodes[i].cpt[0]
+            if a == 0 and b == 1:
+                prob = self.net.nodes[i].cpt[1]
+
+            if a == 1 and b == 0:
+                prob = self.net.nodes[i].cpt[2]
+            if a == 0 and b == 0:
+                prob = self.net.nodes[i].cpt[3]
 
         return prob
 
-    def get_order(self):
 
-        order = np.zeros(len(self.ordered_array), dtype='int64')
-        for i in range(len(self.ordered_array)):
-            order[i] = int(self.ordered_array[i].value)
+def get_order(self):
+    order = np.zeros(len(self.ordered_array), dtype='int64')
+    for i in range(len(self.ordered_array)):
+        order[i] = int(self.ordered_array[i].value)
 
-        return order
+    return order
