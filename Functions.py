@@ -193,7 +193,7 @@ def score(dataset, node_i, p_i, nodes):
         product = quoz * p2
         score = score * product
         j = j + 1
-
+    # print(score)
     return score
 
 
@@ -229,11 +229,17 @@ def k2(dataset, nodes, upper_bound):
             if p_new > p_old:
                 p_old = p_new
                 nodes[i].parents.add(nodes[z].value)
-                pred.discard(z)
+                pred.remove(z)
             else:
                 ok = False
 
-            # pred = np.append(pred, int(i))
-    for j in range(len(nodes)):
-        print(nodes[j].parents)
-    print()
+    dag = np.zeros((8, 8))
+    for r in range(len(nodes)):
+        s = list(nodes[r].parents)
+        print(s)
+        for c in range(len(s)):
+            i = nodes[r].value
+            j = s[c]
+            dag[j][i] = 1
+
+    return dag

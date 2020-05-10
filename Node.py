@@ -18,6 +18,6 @@ class Node:
     def print_node(self):
         print(self.name)
         print(self.parents)
-        print(self.cpt)
-        print(self.domain_values)
-        print(self.value)
+        # print(self.cpt)
+        # print(self.domain_values)
+        # print(self.value)
