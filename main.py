@@ -1,9 +1,12 @@
 from BayesNet import *
+from Dataset import *
+from Input import *
+from Learning import *
 
-sum_dag = np.zeros((8, 8))
-for i in range(10000):
-    nodes = asia_net()
-    net = BayesNet(nodes)
+nodes = cancer_net()
+net = BayesNet(nodes)
+sum_dag = np.zeros((len(nodes), len(nodes)))
+for i in range(1000):
     dataset = Dataset(net, 150)
     app = k2(dataset.dataset, dataset.ordered_array, 2)
     sum_dag = sum_dag + app

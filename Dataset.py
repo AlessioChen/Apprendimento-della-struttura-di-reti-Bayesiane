@@ -1,14 +1,17 @@
 import random
 
-from Functions import *
+import numpy as np
+
+from Order_functions import *
 
 
 # classe che genera un dataset data la rete e la dimensione
 class Dataset:
     def __init__(self, bn_net, dim):
-        self.net = bn_net
-        self.dim = dim
+        self.net = bn_net  # rete bayesiana
+        self.dim = dim  # numero di righe del dataset
         self.dataset = np.zeros((self.dim, self.net.n))
+
         # con il DFS mi genera un cammino dalla radice alle foglie
         self.ordered_array = order(self.net.dag, self.net.nodes)
 
@@ -18,13 +21,6 @@ class Dataset:
                 r2 = self.get_prob(self.ordered_array[j].value, i)
                 if r1 <= r2:
                     self.dataset[i][self.ordered_array[j].value] = 1
-
-    #     mat = np.asmatrix(self.dataset)
-    #     names = ''
-    #     for i in range(len(self.net.nodes)):
-    #         names = names + ' ' + self.net.nodes[i].name
-    #
-    # # np.savetxt('out.txt', mat, header=names, fmt='%s')
 
     def get_prob(self, i, index):
         # i è l'indice del nodo
@@ -58,10 +54,3 @@ class Dataset:
 
         return prob
 
-
-def get_order(self):
-    order = np.zeros(len(self.ordered_array), dtype='int64')
-    for i in range(len(self.ordered_array)):
-        order[i] = int(self.ordered_array[i].value)
-
-    return order
