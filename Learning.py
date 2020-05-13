@@ -7,16 +7,15 @@ import numpy as np
 
 def cartesian_product(n, f_i):
     # n è il numero di padri
-    count = 0
     x = [0, 1]
-    if n == 1:
-        for iter in itertools.product(x):
-            f_i[count] = iter
-            count += 1
-    if n == 2:
-        for iter in itertools.product(x, x):
-            f_i[count] = iter
-            count += 1
+    y = []
+    count = 0
+    for j in range(n):
+        y.append(x)
+
+    for iter in itertools.product(*y):
+        f_i[count] = iter
+        count += 1
 
     return f_i
 
@@ -74,8 +73,10 @@ def score(dataset, node_i, p_i):
         dem = math.factorial(n_ij + r_i - 1)
         quoz = num / dem
         product = quoz * p2
+
         score = score * product
         j = j + 1
+
     return score
 
 
@@ -89,7 +90,7 @@ def maximize_score(dataset, nodes, i, pred):
         tmp = copy.deepcopy(p_i)
         tmp.add(nodes[x].value)
         local_score = score(dataset, node_i, tmp)
-        if local_score > p_max:
+        if local_score >= p_max:
             z = x
             p_max = local_score
 
@@ -110,7 +111,7 @@ def k2(dataset, nodes, upper_bound):
         while ok == True and len(nodes[i].parents) < upper_bound:
             (z, p_new) = maximize_score(dataset, nodes, i, pred)
 
-            if p_new > p_old:
+            if p_new >= p_old:
                 p_old = p_new
                 nodes[i].parents.add(nodes[z].value)
                 pred.remove(z)
