@@ -2,7 +2,7 @@ import random
 
 import numpy as np
 
-from Order_functions import *
+from Dfs import *
 
 
 # classe che genera un dataset data la rete e la dimensione
@@ -24,33 +24,18 @@ class Dataset:
 
     def get_prob(self, i, index):
         # i è l'indice del nodo
-        # riga che sto esaminando
+        # index riga che sto esaminando
         p_i = self.net.nodes[i].parents
         prob = 0
 
         if len(p_i) == 0:  # no parents
             prob = self.net.nodes[i].cpt[0]
-
-        if len(p_i) == 1:  # 1 parents
-            for j in p_i:
-                if self.dataset[index][j] == 1:
-                    prob = self.net.nodes[i].cpt[0]
-                else:
-                    prob = self.net.nodes[i].cpt[1]
-
-        if len(p_i) == 2:  # 2 parents
-            s = list(p_i)
-            a = self.dataset[index][s[0]]
-            b = self.dataset[index][s[1]]
-            if a == 1 and b == 1:
-                prob = self.net.nodes[i].cpt[0]
-            if a == 0 and b == 1:
-                prob = self.net.nodes[i].cpt[1]
-
-            if a == 1 and b == 0:
-                prob = self.net.nodes[i].cpt[2]
-            if a == 0 and b == 0:
-                prob = self.net.nodes[i].cpt[3]
+        else:
+            dim = len(p_i)
+            s = sorted(p_i)
+            k = 0
+            for j in range(dim):
+                k += 2 ** (dim - j - 1) * self.dataset[index][s[j]]
+            prob = self.net.nodes[i].cpt[int(k)]
 
         return prob
-
