@@ -1,5 +1,5 @@
 # Apprendimento-della-struttura-di-reti-Bayesiane
-Lo scopo dell'elaborato è quello di utilizzare apprendere la struttura di una rete Bayesiana a partire da un dataset.
+Lo scopo dell'elaborato è quello di apprendere la struttura di una rete Bayesiana a partire da un dataset.
 In questo progetto in paritocalre, si apprende la struttura della rete "ASIA".
 
 ## Requisiti 
