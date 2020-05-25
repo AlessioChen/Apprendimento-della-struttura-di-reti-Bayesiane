@@ -26,7 +26,6 @@ class Dataset:
         # i è l'indice del nodo
         # index riga che sto esaminando
         p_i = self.net.nodes[i].parents
-        prob = 0
 
         if len(p_i) == 0:  # no parents
             prob = self.net.nodes[i].cpt[0]
@@ -36,6 +35,7 @@ class Dataset:
             k = 0
             for j in range(dim):
                 k += 2 ** (dim - j - 1) * self.dataset[index][s[j]]
+
             prob = self.net.nodes[i].cpt[int(k)]
 
         return prob

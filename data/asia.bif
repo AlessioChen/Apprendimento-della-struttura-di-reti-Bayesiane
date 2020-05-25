@@ -44,7 +44,7 @@ probability ( bronc | smoke ) {
   (yes) 0.6, 0.4;
 
 }
-probability ( either | lung, tub ) {
+probability ( either | lung , tub ) {
   (no, no) 0.0, 1.0;
   (no, yes) 1.0, 0.0;
   (yes, no) 1.0, 0.0;
@@ -63,7 +63,5 @@ probability ( dysp | bronc, either ) {
   (no, yes) 0.7, 0.3;
   (yes, no) 0.8, 0.2;
   (yes, yes) 0.9, 0.1;
-
-
 
 }
